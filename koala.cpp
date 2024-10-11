@@ -2,18 +2,17 @@
 #include <fstream>
 #include <vector>
 #include <sstream>
-// #include <typeinfo>
 #include <algorithm> 
 #include <iomanip>
 
 
 void printvector(std::vector<std::string> V){
     for (std::string elem : V){
-        std::cout << std::setw(12) << elem << " ,"; // use tabs
+        std::cout << std::setw(12) << elem << " ,"; 
     }
     std::cout<< std::endl;
 }
-void printmatrix(std::vector<std::vector<float>> M){
+void printmatrix(std::vector<std::vector<std::string>> M){
     for (const auto row : M) {
         for (const auto value : row) {                      // code repetition
             std::cout << std::setw(12) << value ;
@@ -21,7 +20,7 @@ void printmatrix(std::vector<std::vector<float>> M){
         std::cout << std::endl;  
     }
 }
-void printmatrixpointer(std::vector<std::vector<float*>> M){
+void printmatrixpointer(std::vector<std::vector<std::string*>> M){
     for (const auto row : M) {
         for (const auto value : row) {
             std::cout << std::setw(18) << value;
@@ -40,8 +39,8 @@ bool is_in(std::vector<std::string> V, std::string S){
 class Koala{
 public:
     std::string m_DATAfileName;
-    std::vector<std::vector<float>> m_DATAmatrixasword;
-    std::vector<std::vector<float*>> m_DATAmatrixasFeature;
+    std::vector<std::vector<std::string>> m_DATAmatrixasword;
+    std::vector<std::vector<std::string*>> m_DATAmatrixasFeature;
     std::vector<std::string>  m_FeaturesVector;
 
     Koala(std::string DATAfileName){
@@ -74,11 +73,10 @@ public:
             std::istringstream ss(DATAmatrixaslineStr[i]); 
             std::string token;
  
-            std::vector<float> row;
+            std::vector<std::string> row;
             row.reserve(100);
             while (getline(ss,token,',')){
-                float num = std::stof(token);
-                row.push_back(num);
+                row.push_back(token);
             }
             m_DATAmatrixasword.push_back(row);
         }
@@ -86,7 +84,7 @@ public:
 
         if (!m_DATAmatrixasword.empty()){
                 for (int i = 0; i < m_DATAmatrixasword[0].size(); ++i){
-                    std::vector<float*> row;
+                    std::vector<std::string*> row;
                     row.reserve(100);
                     for (int j = 0; j < m_DATAmatrixasword.size(); ++j){
                         row.push_back(&(m_DATAmatrixasword[j][i]));
@@ -96,12 +94,11 @@ public:
         } else {
             std::cout << "empty vector" <<std::endl;
         } 
-        // printmatrixpointer(m_DATAmatrixasFeature);
     }
 
-    void add_feature(std::string strong){
-        m_FeaturesVector.push_back(strong);
-        std::vector<float*> row;
+    void add_feature(std::string new_feature){
+        m_FeaturesVector.push_back(new_feature);
+        std::vector<std::string*> row;
         row.reserve(100);
         for (int i = 0; i < m_DATAmatrixasword.size(); ++i){
             m_DATAmatrixasword[i].push_back(0);
@@ -110,7 +107,7 @@ public:
         m_DATAmatrixasFeature.push_back(row);
     }
 
-    void insert(int i, int j ,float value){
+    void insert(int i, int j , std::string value){
         m_DATAmatrixasword[i][j] = value;
     }
 
