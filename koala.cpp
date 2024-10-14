@@ -4,6 +4,7 @@
 #include <sstream>
 #include <algorithm> 
 #include <iomanip>
+#include <string>
 
 
 void printvector(std::vector<std::string> V){
@@ -101,7 +102,7 @@ public:
         std::vector<std::string*> row;
         row.reserve(100);
         for (int i = 0; i < m_DATAmatrixasword.size(); ++i){
-            m_DATAmatrixasword[i].push_back(0);
+            m_DATAmatrixasword[i].push_back("0");
             row.push_back(&(m_DATAmatrixasword[i][m_DATAmatrixasword[i].size() - 1]));
         }
         m_DATAmatrixasFeature.push_back(row);
@@ -166,7 +167,7 @@ int main()
     std::cout<<std::endl;
     std::cout<<std::endl;
 
-    Data.OneHoteEncoding();
+    // Data.OneHoteEncoding();
 }
 
 
