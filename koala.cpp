@@ -10,7 +10,7 @@
 
 void printvector(std::vector<std::string> V){
     for (std::string elem : V){
-        std::cout << std::setw(12) << elem << " ,"; 
+        std::cout << std::setw(8) << elem << " ,"; 
     }
     std::cout<< std::endl;
 }
@@ -18,7 +18,7 @@ void printvector(std::vector<std::string> V){
 void printmatrix(std::vector<std::vector<std::string>> M){
     for (const auto row : M) {
         for (const auto value : row) {      
-            std::cout << std::setw(12) << value ;
+            std::cout << std::setw(8) << value ;
         }
         std::cout << std::endl;  
     }
@@ -27,7 +27,7 @@ void printmatrix(std::vector<std::vector<std::string>> M){
 void printmatrixpointer(std::vector<std::vector<std::string*>> M){
     for (const auto row : M) {
         for (const auto value : row) {
-            std::cout << std::setw(18) << value;
+            std::cout << std::setw(16) << *value;
         }
         std::cout << std::endl;    
     }
@@ -132,15 +132,13 @@ public:
         m_FeaturesVector.push_back(new_feature);
         std::vector<std::string*> row;
         row.reserve(100);
-        for (int i = 0; i < m_DATAmatrixasword.size(); ++i) {
-            m_DATAmatrixasword[i].push_back(0);
         for (int i = 0; i < m_DATAmatrixasword.size(); ++i){
             m_DATAmatrixasword[i].push_back("0");
-            row.push_back(&(m_DATAmatrixasword[i][m_DATAmatrixasword[i].size() - 1]));
+            row.push_back(&(m_DATAmatrixasword[i].back()));
         }
         m_DATAmatrixasFeature.push_back(row);
     }
-    }
+
     void insert(int i, int j , std::string value) {
         m_DATAmatrixasword[i][j] = value;
     }
@@ -163,31 +161,35 @@ public:
     }
 
     void OneHotencoding(){
-       
+        std::vector<std::string> featurerow;
+        int featureindex = 0;
+
+        for (int i = 0; i < m_DATAmatrixasFeature.size(); i++){
+            for (int j = 0; j<m_DATAmatrixasFeature[i].size(); j++){
+                if (is_string(*(m_DATAmatrixasFeature[i][j])) && !(is_in(featurerow, *(m_DATAmatrixasFeature[i][j])))){
+                    featurerow.push_back(*(m_DATAmatrixasFeature[i][j]));
+                    featureindex = i;
+                }
+            }
+        }
+
+        for(int k = 0; k<featurerow.size(); k++){ 
+            add_feature(m_FeaturesVector[featureindex] + "_" + featurerow[k]);
+            for(int g = 0; g < m_DATAmatrixasword.size(); g++){
+                if (m_DATAmatrixasword[g][featureindex] == featurerow[k]){
+                    insert(g, (m_DATAmatrixasword[g].size() - 1), "1");
+                }
+            }
+        }
+        remove(m_FeaturesVector[featureindex]);
     }
 };    
 
 int main(){
     Koala Data("winequality-red (1).csv");
     
-    printmatrix(Data.m_DATAmatrixasword);
-    std::cout << std::endl;
-    std::cout << std::endl;
-    printmatrixpointer(Data.m_DATAmatrixasFeature);
-    std::cout << std::endl;
-    std::cout << std::endl;
 
-    Data.add_feature("Arevik");
-
-    printmatrix(Data.m_DATAmatrixasword);
-    std::cout << std::endl;
-    std::cout << std::endl;
-    printmatrixpointer(Data.m_DATAmatrixasFeature);
-    std::cout << std::endl;
-    std::cout << std::endl;
-
-    Data.remove("citric acid");
-
+    printvector(Data.m_FeaturesVector);
     std::cout << std::endl;
     std::cout << std::endl;
     printmatrix(Data.m_DATAmatrixasword);
@@ -197,6 +199,10 @@ int main(){
     std::cout << std::endl;
     std::cout << std::endl;
 
+    Data.OneHotencoding();
+    printvector(Data.m_FeaturesVector);
+    printmatrix(Data.m_DATAmatrixasword);
+    
 
     return 0;
 };
